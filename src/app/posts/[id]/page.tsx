@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Clock, FileText, CheckCircle } from "lucid
 import MeetingRequestForm from "@/components/MeetingRequestForm";
 import MeetingResponseButtons from "@/components/MeetingResponseButtons";
 import { updatePostStatus } from "@/actions/postActions";
+import PartnerFoundButton from "@/components/PartnerFoundButton";
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
@@ -40,14 +41,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
               <span className={`badge badge-${post.status.toLowerCase().split(' ')[0]}`}>{post.status}</span>
               {isOwner && post.status !== 'Partner Found' && (
-                <form action={async () => {
+                <PartnerFoundButton onConfirm={async () => {
                   "use server";
                   await updatePostStatus(post.id, "Partner Found");
-                }}>
-                  <button type="submit" className="btn btn-success" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <CheckCircle size={14} /> Mark Partner Found
-                  </button>
-                </form>
+                }} />
               )}
             </div>
             <h1 style={{ fontSize: '2.25rem', fontWeight: 700, lineHeight: 1.2 }}>{post.title}</h1>

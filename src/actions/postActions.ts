@@ -99,6 +99,7 @@ export async function updatePostStatus(postId: string, status: string) {
 
   revalidatePath("/dashboard");
   revalidatePath("/posts");
+  revalidatePath(`/posts/${postId}`);
   return { success: true };
 }
 
