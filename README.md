@@ -12,6 +12,15 @@ A secure, full-stack web application that facilitates structured matchmaking bet
 - **Project Discovery**: Browse, search, and filter posts by domain, city, required expertise, status, and date.
 - **User Feedback**: Floating feedback button available on all pages.
 
+> **📋 Mock Email (Demo Mode):** This app does not send real emails. Both the **email verification code** and the **password reset token** are printed directly to the Docker terminal logs. After registering or requesting a password reset, check the terminal output for a block like:
+> ```
+> === MOCK EMAIL ===
+> To: yourname@university.edu
+> Subject: Verify your Health AI Account
+> Token: 482910
+> ==================
+> ```
+
 ### For Healthcare Professionals & Engineers
 - **4-Step Meeting Handshake**:
   1. **Express Interest** — Submit a request with a message and NDA acceptance.
@@ -69,7 +78,6 @@ Once the build is complete, the database migrates and seeds automatically. Open 
 | **Doctor** | `dr.smith@med.edu` | `password123` |
 | **Engineer** | `dev.jones@tech.edu` | `password123` |
 
-> **Note on Forgot Password**: In the local environment, reset tokens are printed to the Docker container logs (mock email) instead of being sent by email.
 
 ---
 
