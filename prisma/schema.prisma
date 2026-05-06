@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
@@ -13,11 +14,14 @@ model User {
   role            String
   city            String?
   institution     String?
-  isActive        Boolean          @default(true)
-  posts           Post[]
-  meetingRequests MeetingRequest[]
-  activityLogs    ActivityLog[]
-  createdAt       DateTime         @default(now())
+  isActive         Boolean          @default(true)
+  emailVerified    Boolean          @default(false)
+  verificationToken String?
+  posts            Post[]
+  meetingRequests  MeetingRequest[]
+  activityLogs     ActivityLog[]
+  notifications    Notification[]
+  createdAt        DateTime         @default(now())
 }
 
 model Post {
@@ -58,4 +62,14 @@ model ActivityLog {
   actionType   String
   targetEntity String?
   resultStatus String?
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

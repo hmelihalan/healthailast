@@ -70,10 +70,28 @@ export async function updatePostStatus(postId: string, status: string) {
   const session = await getSession();
   if (!session) return { error: "Unauthorized" };
 
+  const post = await db.post.findUnique({ where: { id: postId, ownerId: session.userId } });
+  if (!post) return { error: "Unauthorized" };
+
   await db.post.update({
     where: { id: postId, ownerId: session.userId },
     data: { status }
   });
+
+  const requesters = await db.meetingRequest.findMany({
+    where: { postId },
+    select: { requesterId: true }
+  });
+
+  if (requesters.length > 0) {
+    await db.notification.createMany({
+      data: requesters.map(r => ({
+        userId: r.requesterId,
+        type: "POST_UPDATE",
+        message: `The status of the post "${post.title}" has changed to ${status}.`
+      }))
+    });
+  }
 
   await db.activityLog.create({
     data: { userId: session.userId, actionType: "UPDATE_POST_STATUS", targetEntity: postId, resultStatus: status }

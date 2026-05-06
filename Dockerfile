@@ -26,4 +26,4 @@ EXPOSE 3000
 ENV PORT=3000
 
 # Push database schema to the PostgreSQL db, run the seeder, and then start the Next.js server
-CMD ["sh", "-c", "npx prisma db push && npx ts-node --compilerOptions '{\"module\":\"CommonJS\"}' prisma/seed.ts || true && npm run start"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && npx ts-node --compilerOptions '{\"module\":\"CommonJS\"}' prisma/seed.ts || true && npm run start"]

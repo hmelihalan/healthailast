@@ -1,12 +1,19 @@
 import { getSession } from "@/lib/session";
+import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { Bell, CheckCircle, Info } from "lucide-react";
+import { Bell } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import NotificationItem from "./NotificationItem";
 
 export default async function NotificationsPage() {
   const session = await getSession();
   if (!session) redirect("/login");
+
+  const notifications = await db.notification.findMany({
+    where: { userId: session.userId },
+    orderBy: { createdAt: "desc" }
+  });
 
   return (
     <div className="fade-in" style={{ padding: '1rem 0', maxWidth: '800px', margin: '0 auto' }}>
@@ -20,30 +27,13 @@ export default async function NotificationsPage() {
       </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {/* Mock Notification 1 */}
-        <div className="card" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', borderLeft: '4px solid var(--accent-color)' }}>
-          <div style={{ background: 'var(--accent-light)', padding: '0.5rem', borderRadius: '50%' }}>
-            <Info size={20} color="var(--accent-color)" />
-          </div>
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Welcome to HEALTH AI</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Your institutional email has been verified. You can now browse posts or create your own announcement!</p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>2 hours ago</p>
-          </div>
-        </div>
-
-        {/* Mock Notification 2 */}
-        <div className="card" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', borderLeft: '4px solid var(--success-color)' }}>
-          <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '0.5rem', borderRadius: '50%' }}>
-            <CheckCircle size={20} color="var(--success-color)" />
-          </div>
-          <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Profile Updated</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Your profile visibility and GDPR settings have been successfully saved.</p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>1 day ago</p>
-          </div>
-        </div>
-
+        {notifications.length === 0 ? (
+          <p style={{ color: 'var(--text-secondary)' }}>You have no notifications at this time.</p>
+        ) : (
+          notifications.map(notification => (
+            <NotificationItem key={notification.id} notification={notification} />
+          ))
+        )}
       </div>
     </div>
   );

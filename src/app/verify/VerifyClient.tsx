@@ -9,11 +9,16 @@ export default function VerifyClient() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const [isPending, startTransition] = useTransition();
+  const [token, setToken] = useState("");
+  const [error, setError] = useState("");
 
   const handleVerify = () => {
-    if (email) {
-      startTransition(() => {
-        verifyAndLogin(email);
+    if (email && token) {
+      startTransition(async () => {
+        const res = await verifyAndLogin(email, token);
+        if (res?.error) {
+          setError(res.error);
+        }
       });
     }
   };
@@ -30,17 +35,29 @@ export default function VerifyClient() {
         </div>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Verify Your Email</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.95rem' }}>
-          We&apos;ve sent a verification link to <strong>{email}</strong>. 
-          For the purpose of this demonstration, you can bypass the email check and verify directly here:
+          We&apos;ve simulated sending a verification token to <strong>{email}</strong>. 
+          Please check your terminal logs for the mock email and enter the 6-digit token below:
         </p>
+
+        {error && <div style={{ color: 'var(--danger-color)', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+
+        <input 
+          type="text" 
+          value={token} 
+          onChange={(e) => setToken(e.target.value)} 
+          placeholder="Enter token" 
+          className="form-input" 
+          style={{ marginBottom: '1.5rem', textAlign: 'center', letterSpacing: '0.2rem', fontSize: '1.2rem' }}
+          maxLength={6}
+        />
 
         <button 
           onClick={handleVerify} 
-          disabled={isPending} 
+          disabled={isPending || !token} 
           className="btn btn-primary" 
           style={{ width: '100%' }}
         >
-          {isPending ? "Verifying..." : "Simulate Email Verification"}
+          {isPending ? "Verifying..." : "Verify Token"}
         </button>
       </div>
     </div>

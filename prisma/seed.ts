@@ -16,39 +16,42 @@ async function main() {
   // Seed Admin
   const admin = await prisma.user.upsert({
     where: { email: 'admin@healthai.edu' },
-    update: {},
+    update: { emailVerified: true },
     create: {
       email: 'admin@healthai.edu',
       passwordHash,
       role: 'Admin',
       city: 'Berlin',
       institution: 'Health AI Core',
+      emailVerified: true,
     },
   })
   
   // Seed Doctor
   const doctor = await prisma.user.upsert({
     where: { email: 'dr.smith@med.edu' },
-    update: {},
+    update: { emailVerified: true },
     create: {
       email: 'dr.smith@med.edu',
       passwordHash,
       role: 'Healthcare Professional',
       city: 'Munich',
       institution: 'Munich General Hospital',
+      emailVerified: true,
     },
   })
   
   // Seed Engineer
   const engineer = await prisma.user.upsert({
     where: { email: 'dev.jones@tech.edu' },
-    update: {},
+    update: { emailVerified: true },
     create: {
       email: 'dev.jones@tech.edu',
       passwordHash,
       role: 'Engineer',
       city: 'Munich',
       institution: 'Tech University Munich',
+      emailVerified: true,
     },
   })
   

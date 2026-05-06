@@ -40,6 +40,17 @@ export async function requestMeeting(formData: FormData) {
     data: { userId: session.userId, actionType: "REQUEST_MEETING", targetEntity: mr.id, resultStatus: "SUCCESS" }
   });
 
+  const post = await db.post.findUnique({ where: { id: postId }, select: { ownerId: true, title: true } });
+  if (post) {
+    await db.notification.create({
+      data: {
+        userId: post.ownerId,
+        type: "MEETING_REQUEST",
+        message: `New meeting request for your post: ${post.title}`
+      }
+    });
+  }
+
   revalidatePath(`/posts/${postId}`);
   return { success: true };
 }
@@ -75,6 +86,14 @@ export async function respondToMeeting(requestId: string, status: "Scheduled" | 
       actionType: `RESPOND_MEETING_${status.toUpperCase()}`,
       targetEntity: requestId,
       resultStatus: "SUCCESS"
+    }
+  });
+
+  await db.notification.create({
+    data: {
+      userId: mr.requesterId,
+      type: "MEETING_UPDATE",
+      message: `Your meeting request for "${mr.post.title}" was ${status.toLowerCase()}.`
     }
   });
 
