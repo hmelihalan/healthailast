@@ -36,7 +36,8 @@ export async function requestMeeting(formData: FormData) {
       requesterId: session.userId,
       message,
       ndaAccepted: true,
-      status: "Pending"
+      status: "Pending",
+      timeSlots: null
     }
   });
 
