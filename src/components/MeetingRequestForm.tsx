@@ -47,9 +47,9 @@ export default function MeetingRequestForm({ postId }: { postId: string }) {
       <input type="hidden" name="postId" value={postId} />
 
       <div className="form-group" style={{ marginBottom: 0 }}>
-        <label className="form-label">Propose Time Slots</label>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Suggest 2-3 specific dates and times (e.g. Next Tuesday 14:00 CET)</p>
-        <input type="text" name="timeSlots" required className="input-field" placeholder="e.g. Thursday 10:00 or Friday 15:00 CET" />
+        <label className="form-label">Propose a Time Slot</label>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Select a specific date and time for the meeting</p>
+        <input type="datetime-local" name="timeSlots" required className="input-field" />
       </div>
 
       <div className="form-group" style={{ marginBottom: 0 }}>

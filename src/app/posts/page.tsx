@@ -1,18 +1,23 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { Search, MapPin, ExternalLink } from "lucide-react";
+import { getSession } from "@/lib/session";
 
-export default async function PostsPage({ searchParams }: { searchParams: Promise<{ domain?: string, city?: string, status?: string }> }) {
+export default async function PostsPage({ searchParams }: { searchParams: Promise<{ domain?: string, city?: string, requiredExpertise?: string, status?: string }> }) {
+  const session = await getSession();
   const resolvedParams = await searchParams;
   const domain = resolvedParams.domain || "";
   const city = resolvedParams.city || "";
+  const requiredExpertise = resolvedParams.requiredExpertise || "";
   const status = resolvedParams.status || "Active";
 
   const posts = await db.post.findMany({
     where: {
       status,
-      domain: domain ? { contains: domain } : undefined,
-      city: city ? { contains: city } : undefined,
+      ...(status === 'Draft' ? { ownerId: session?.userId || 'none' } : {}),
+      domain: domain ? { contains: domain, mode: 'insensitive' } : undefined,
+      city: city ? { contains: city, mode: 'insensitive' } : undefined,
+      requiredExpertise: requiredExpertise ? { contains: requiredExpertise, mode: 'insensitive' } : undefined,
     },
     include: {
       owner: {
@@ -32,17 +37,21 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
       {/* Search Filters */}
       <div className="card" style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'center', padding: '1rem 1.5rem', flexWrap: 'wrap' }}>
         <form style={{ display: 'flex', gap: '1rem', width: '100%', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <input type="text" name="domain" defaultValue={domain} placeholder="Filter by Domain..." className="input-field" style={{ margin: 0 }} />
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <input type="text" name="domain" defaultValue={domain} placeholder="Domain..." className="input-field" style={{ margin: 0 }} />
           </div>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <input type="text" name="city" defaultValue={city} placeholder="Filter by City..." className="input-field" style={{ margin: 0 }} />
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <input type="text" name="city" defaultValue={city} placeholder="City..." className="input-field" style={{ margin: 0 }} />
+          </div>
+          <div style={{ flex: 1, minWidth: '150px' }}>
+            <input type="text" name="requiredExpertise" defaultValue={requiredExpertise} placeholder="Expertise..." className="input-field" style={{ margin: 0 }} />
           </div>
           <div style={{ width: '150px' }}>
             <select name="status" defaultValue={status} className="input-field" style={{ margin: 0 }}>
               <option value="Active">Active</option>
               <option value="Meeting Scheduled">Meeting Scheduled</option>
               <option value="Partner Found">Partner Found</option>
+              {session && <option value="Draft">Drafts (Mine)</option>}
             </select>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
