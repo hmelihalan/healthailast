@@ -3,13 +3,23 @@ import Link from "next/link";
 import { Search, MapPin, ExternalLink } from "lucide-react";
 import { getSession } from "@/lib/session";
 
-export default async function PostsPage({ searchParams }: { searchParams: Promise<{ domain?: string, city?: string, requiredExpertise?: string, status?: string }> }) {
+export default async function PostsPage({ searchParams }: { searchParams: Promise<{ domain?: string, city?: string, requiredExpertise?: string, status?: string, date?: string }> }) {
   const session = await getSession();
   const resolvedParams = await searchParams;
   const domain = resolvedParams.domain || "";
   const city = resolvedParams.city || "";
   const requiredExpertise = resolvedParams.requiredExpertise || "";
   const status = resolvedParams.status || "Active";
+  const dateFilter = resolvedParams.date || "all";
+
+  let dateQuery = {};
+  if (dateFilter === "today") {
+    dateQuery = { gte: new Date(new Date().setHours(0,0,0,0)) };
+  } else if (dateFilter === "week") {
+    dateQuery = { gte: new Date(new Date().setDate(new Date().getDate() - 7)) };
+  } else if (dateFilter === "month") {
+    dateQuery = { gte: new Date(new Date().setMonth(new Date().getMonth() - 1)) };
+  }
 
   const posts = await db.post.findMany({
     where: {
@@ -18,6 +28,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
       domain: domain ? { contains: domain, mode: 'insensitive' } : undefined,
       city: city ? { contains: city, mode: 'insensitive' } : undefined,
       requiredExpertise: requiredExpertise ? { contains: requiredExpertise, mode: 'insensitive' } : undefined,
+      createdAt: dateFilter !== "all" ? dateQuery : undefined,
     },
     include: {
       owner: {
@@ -52,6 +63,14 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
               <option value="Meeting Scheduled">Meeting Scheduled</option>
               <option value="Partner Found">Partner Found</option>
               {session && <option value="Draft">Drafts (Mine)</option>}
+            </select>
+          </div>
+          <div style={{ width: '150px' }}>
+            <select name="date" defaultValue={dateFilter} className="input-field" style={{ margin: 0 }}>
+              <option value="all">Any Time</option>
+              <option value="today">Today</option>
+              <option value="week">Past Week</option>
+              <option value="month">Past Month</option>
             </select>
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>

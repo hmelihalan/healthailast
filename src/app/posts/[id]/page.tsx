@@ -7,6 +7,7 @@ import MeetingRequestForm from "@/components/MeetingRequestForm";
 import MeetingResponseButtons from "@/components/MeetingResponseButtons";
 import { updatePostStatus } from "@/actions/postActions";
 import PartnerFoundButton from "@/components/PartnerFoundButton";
+import AdminActionsClient from "@/app/admin/AdminActionsClient";
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
@@ -27,14 +28,23 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
   if (!post) notFound();
 
   const isOwner = session?.userId === post.ownerId;
+  const isAdmin = session?.role === "Admin";
   const userRequest = session && !isOwner ? post.meetingRequests.find(r => r.requesterId === session.userId) : null;
   const hasRequested = !!userRequest;
 
   return (
     <div className="fade-in" style={{ padding: '1rem 0', maxWidth: '900px', margin: '0 auto' }}>
-      <Link href="/posts" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-        <ArrowLeft size={16} /> Back to Discover
-      </Link>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <Link href="/posts" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          <ArrowLeft size={16} /> Back to Discover
+        </Link>
+        {isAdmin && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--danger-color)' }}>
+             <span style={{ fontSize: '0.85rem', color: 'var(--danger-color)', fontWeight: 600 }}>Admin Control:</span>
+             <AdminActionsClient action="delete_post" targetId={post.id} />
+          </div>
+        )}
+      </div>
 
       <div className="card" style={{ padding: '2.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
