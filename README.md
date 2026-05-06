@@ -1,6 +1,6 @@
 # HEALTH AI — Co-Creation & Innovation Platform
 
-A secure, full-stack web application that facilitates structured matchmaking between **healthcare professionals** (Doctors) and **engineers** for innovation-driven collaborations. Built for SENG 384 Software Project III.
+A secure, full-stack web application that facilitates structured matchmaking between **healthcare professionals** (Doctors) and **engineers** for innovation-driven collaborations. Built for SENG 384 Software Project.
 
 ---
 
