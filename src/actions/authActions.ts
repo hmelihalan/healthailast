@@ -35,7 +35,11 @@ export async function registerUser(formData: FormData) {
     try {
       await sendVerificationEmail(email, verificationToken);
     } catch (e: any) {
-      return { error: `Failed to send email: ${e.message}. Note: Resend's free tier only sends to your own email address unless you verify your domain.` };
+      // In Demo/Sandbox mode, we surface the token so the user isn't blocked
+      return { 
+        error: `Email sending failed (${e.message}). \n\nDEMO FALLBACK: Since you're on a Resend free tier, use this code to verify: ${verificationToken}`,
+        demoToken: verificationToken 
+      };
     }
     redirect(`/verify?email=${encodeURIComponent(email)}`);
   }
@@ -50,9 +54,11 @@ export async function registerUser(formData: FormData) {
   try {
     await sendVerificationEmail(email, verificationToken);
   } catch (e: any) {
-    // Delete the user record if we can't send the email, so they can try again with a different email/fix
-    await db.user.delete({ where: { id: user.id } });
-    return { error: `Failed to send email: ${e.message}. Note: Resend's free tier only sends to your own email address unless you verify your domain.` };
+    // Delete the user record if we can't send the email, BUT for demo purposes, let's let them proceed with a fallback
+    return { 
+      error: `Email sending failed (${e.message}). \n\nDEMO FALLBACK: Use this code to verify: ${verificationToken}`,
+      demoToken: verificationToken 
+    };
   }
 
   await db.activityLog.create({
