@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
-import { AlertCircle, Download, FileJson, Trash2 } from "lucide-react";
+import { AlertCircle, FileJson } from "lucide-react";
 import ProfileActionsClient from "./ProfileActionsClient";
 import { logoutUser } from "@/actions/authActions";
 import Link from "next/link";
@@ -31,6 +31,8 @@ export default async function ProfilePage() {
           </Link>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+          <div><strong>First Name</strong></div><div>{user.firstName || "Not set"}</div>
+          <div><strong>Last Name</strong></div><div>{user.lastName || "Not set"}</div>
           <div><strong>Email</strong></div><div>{user.email}</div>
           <div><strong>Role</strong></div><div>{user.role}</div>
           <div><strong>Institution</strong></div><div>{user.institution}</div>

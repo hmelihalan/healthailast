@@ -2,7 +2,8 @@
 
 import { Trash2, UserX } from "lucide-react";
 import { useTransition } from "react";
-import { suspendUser, adminDeletePost } from "@/actions/adminActions";
+import { suspendUser } from "@/actions/adminActions";
+import { deletePost } from "@/actions/postActions";
 
 export default function AdminActionsClient({ action, targetId }: { action: "suspend" | "delete_post", targetId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -16,7 +17,7 @@ export default function AdminActionsClient({ action, targetId }: { action: "susp
       if (action === "suspend") {
         await suspendUser(targetId);
       } else if (action === "delete_post") {
-        await adminDeletePost(targetId);
+        await deletePost(targetId);
       }
     });
   };

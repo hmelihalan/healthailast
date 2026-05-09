@@ -71,9 +71,10 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
           users.map(u => (
             <div key={u.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <Link href={`/admin/users/${u.id}`} style={{ fontWeight: 600, fontSize: '1.05rem', marginBottom: '0.2rem', textDecoration: 'none', color: 'inherit', display: 'inline-block' }}>
-                  {u.email}
+                <Link href={`/profile/${u.id}`} style={{ fontWeight: 600, fontSize: '1.05rem', marginBottom: '0.2rem', textDecoration: 'none', color: 'var(--accent-color)', display: 'inline-block' }}>
+                  {u.firstName} {u.lastName}
                 </Link>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>{u.email}</div>
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   <span>{u.role}</span>
                   <span>•</span>

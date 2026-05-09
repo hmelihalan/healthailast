@@ -32,7 +32,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
     },
     include: {
       owner: {
-        select: { institution: true, role: true }
+        select: { institution: true, role: true, firstName: true, lastName: true }
       }
     },
     orderBy: { createdAt: 'desc' }
@@ -94,7 +94,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                 <span className={`badge badge-${post.status.toLowerCase().split(' ')[0]}`}>{post.status}</span>
               </div>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                Posted by {post.owner.role} at {post.owner.institution}
+                Posted by {post.owner.firstName} {post.owner.lastName} ({post.owner.role}) at {post.owner.institution}
               </p>
               
               <div style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>

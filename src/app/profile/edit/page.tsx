@@ -26,13 +26,24 @@ export default async function EditProfilePage() {
         
         <form action={updateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label">First Name</label>
+              <input type="text" name="firstName" defaultValue={user.firstName || ""} required className="input-field" />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label">Last Name</label>
+              <input type="text" name="lastName" defaultValue={user.lastName || ""} required className="input-field" />
+            </div>
+          </div>
+
           <div className="form-group">
             <label className="form-label">Email (Immutable for Demo)</label>
             <input type="text" disabled defaultValue={user.email} className="input-field" style={{ opacity: 0.7 }} />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Role</label>
+            <label className="form-label">Role (Immutable for Demo)</label>
             <input type="text" disabled defaultValue={user.role} className="input-field" style={{ opacity: 0.7 }} />
           </div>
 

@@ -121,5 +121,6 @@ export async function deletePost(postId: string) {
 
   revalidatePath("/dashboard");
   revalidatePath("/posts");
+  revalidatePath("/admin");
   return { success: true };
 }

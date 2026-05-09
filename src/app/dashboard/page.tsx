@@ -2,7 +2,8 @@ import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { PlusCircle, ExternalLink, ShieldCheck } from "lucide-react";
+import { PlusCircle, ExternalLink, ShieldCheck, Trash2 } from "lucide-react";
+import AdminActionsClient from "@/app/admin/AdminActionsClient";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -59,9 +60,12 @@ export default async function DashboardPage() {
                    <Link href={`/posts/${post.id}`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', flex: 1 }}>
                      View Post <ExternalLink size={14} />
                    </Link>
-                   <Link href={`/dashboard/posts/${post.id}/edit`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', flex: 1 }}>
-                     Edit
-                   </Link>
+                    <Link href={`/dashboard/posts/${post.id}/edit`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+                      Edit
+                    </Link>
+                    <div style={{ marginLeft: 'auto' }}>
+                      <AdminActionsClient action="delete_post" targetId={post.id} />
+                    </div>
                 </div>
               </div>
             ))}

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const connectionString = process.env.DATABASE_URL || "postgresql://healthai:healthai_pass@localhost:5432/healthaidb";
+const connectionString = process.env.DATABASE_URL || "postgresql://healthai:healthai_pass@localhost:5433/healthaidb";
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter })
@@ -20,6 +20,8 @@ async function main() {
     create: {
       email: 'admin@healthai.edu',
       passwordHash,
+      firstName: 'System',
+      lastName: 'Administrator',
       role: 'Admin',
       city: 'Berlin',
       institution: 'Health AI Core',
@@ -34,6 +36,8 @@ async function main() {
     create: {
       email: 'dr.smith@med.edu',
       passwordHash,
+      firstName: 'Alice',
+      lastName: 'Smith',
       role: 'Healthcare Professional',
       city: 'Munich',
       institution: 'Munich General Hospital',
@@ -48,6 +52,8 @@ async function main() {
     create: {
       email: 'dev.jones@tech.edu',
       passwordHash,
+      firstName: 'Bob',
+      lastName: 'Jones',
       role: 'Engineer',
       city: 'Munich',
       institution: 'Tech University Munich',

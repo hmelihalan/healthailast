@@ -8,6 +8,8 @@ import { redirect } from "next/navigation";
 export async function registerUser(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
   const role = formData.get("role") as string;
   const city = formData.get("city") as string;
   const institution = formData.get("institution") as string;
@@ -26,7 +28,7 @@ export async function registerUser(formData: FormData) {
   const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
   const user = await db.user.create({
-    data: { email, passwordHash, role, city, institution, verificationToken, emailVerified: false }
+    data: { email, passwordHash, firstName, lastName, role, city, institution, verificationToken, emailVerified: false }
   });
 
   console.log(`\n\n=== MOCK EMAIL ===\nTo: ${email}\nSubject: Verify your Health AI Account\nToken: ${verificationToken}\n==================\n\n`);
@@ -105,12 +107,14 @@ export async function updateProfile(formData: FormData) {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
 
+  const firstName = formData.get("firstName") as string;
+  const lastName = formData.get("lastName") as string;
   const city = formData.get("city") as string;
   const institution = formData.get("institution") as string;
 
   await db.user.update({
     where: { id: session.userId },
-    data: { city, institution }
+    data: { firstName, lastName, city, institution }
   });
 
   await db.activityLog.create({

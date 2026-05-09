@@ -24,6 +24,17 @@ export default function RegisterForm() {
         </div>
       )}
       
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label className="form-label">First Name</label>
+          <input type="text" name="firstName" required className="input-field" placeholder="John" />
+        </div>
+        <div className="form-group" style={{ flex: 1 }}>
+          <label className="form-label">Last Name</label>
+          <input type="text" name="lastName" required className="input-field" placeholder="Doe" />
+        </div>
+      </div>
+
       <div className="form-group">
         <label className="form-label">Email (.edu only)</label>
         <input type="email" name="email" required className="input-field" placeholder="your.name@university.edu" />

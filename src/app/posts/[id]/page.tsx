@@ -17,10 +17,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
     where: { id },
     include: {
       owner: {
-        select: { institution: true, role: true, id: true }
+        select: { institution: true, role: true, id: true, firstName: true, lastName: true }
       },
       meetingRequests: {
-        include: { requester: { select: { email: true, role: true, institution: true } } }
+        include: { requester: { select: { id: true, email: true, role: true, institution: true, firstName: true, lastName: true } } }
       }
     }
   });
@@ -38,9 +38,9 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
         <Link href="/posts" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
           <ArrowLeft size={16} /> Back to Discover
         </Link>
-        {isAdmin && (
+        {(isAdmin || isOwner) && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--danger-color)' }}>
-             <span style={{ fontSize: '0.85rem', color: 'var(--danger-color)', fontWeight: 600 }}>Admin Control:</span>
+             <span style={{ fontSize: '0.85rem', color: 'var(--danger-color)', fontWeight: 600 }}>{isAdmin ? 'Admin Control:' : 'Management:'}</span>
              <AdminActionsClient action="delete_post" targetId={post.id} />
           </div>
         )}
@@ -62,7 +62,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Posted by</p>
-            <p style={{ fontWeight: 600 }}>{post.owner.role}</p>
+            <Link href={`/profile/${post.owner.id}`} style={{ fontWeight: 600, color: 'var(--accent-color)', textDecoration: 'none' }}>
+              {post.owner.firstName} {post.owner.lastName}
+            </Link>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{post.owner.role}</p>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{post.owner.institution}</p>
           </div>
         </div>
@@ -180,7 +183,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                   <div key={req.id} className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
-                        <p style={{ fontWeight: 600, fontSize: '1.1rem' }}>{req.requester.role} from {req.requester.institution}</p>
+                        <Link href={`/profile/${req.requester.id}`} style={{ fontWeight: 600, fontSize: '1.1rem', color: 'var(--accent-color)', textDecoration: 'none' }}>
+                          {req.requester.firstName} {req.requester.lastName}
+                        </Link>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{req.requester.role} from {req.requester.institution}</p>
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{req.requester.email}</p>
                       </div>
                       <span className={`badge`} style={{ 
