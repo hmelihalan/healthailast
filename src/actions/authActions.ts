@@ -22,7 +22,18 @@ export async function registerUser(formData: FormData) {
 
   const existing = await db.user.findUnique({ where: { email } });
   if (existing) {
-    return { error: "User already exists with this email." };
+    if (existing.emailVerified) {
+      return { error: "User already exists with this email." };
+    }
+    // Unverified user — update their record and resend verification
+    const passwordHash = await bcrypt.hash(password, 10);
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+    await db.user.update({
+      where: { email },
+      data: { passwordHash, firstName, lastName, role, city, institution, verificationToken }
+    });
+    await sendVerificationEmail(email, verificationToken);
+    redirect(`/verify?email=${encodeURIComponent(email)}`);
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -39,6 +50,21 @@ export async function registerUser(formData: FormData) {
   });
 
   redirect(`/verify?email=${encodeURIComponent(email)}`);
+}
+
+export async function resendVerification(email: string) {
+  const user = await db.user.findUnique({ where: { email } });
+  if (!user) return { error: "User not found" };
+  if (user.emailVerified) return { error: "Email is already verified" };
+
+  const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+  await db.user.update({
+    where: { email },
+    data: { verificationToken }
+  });
+
+  await sendVerificationEmail(email, verificationToken);
+  return { success: true };
 }
 
 export async function verifyAndLogin(email: string, token: string) {
